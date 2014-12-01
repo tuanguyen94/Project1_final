@@ -65,12 +65,18 @@ namespace Project1_final
             string hostname = null;
             ///Hàm GetIP trả về lại các thông tin ngay trên chuỗi đầu vào
             fn.GetIP(out ipAdresses, out subnets, out gateways, out dnses, out hostname);
-            
+            try
+            {
                 tblIP.Text = ipAdresses[0];
                 tblSubnet.Text = subnets[0];
                 tblGateway.Text = gateways[0];
                 tblDNS.Text = dnses[0];
                 tblHostname.Text = hostname;
+            }
+            catch(Exception print)
+            {
+                MessageBox.Show(print.Message);
+            }
             ///Kiểm tra xem máy có kết nối internet hay không
             ///nếu máy không có kết nối, ẩn label, textbox thuộc tính, hiện label thông báo
                 if (ipAdresses[0] != "")
@@ -204,7 +210,7 @@ namespace Project1_final
         private void set_click(object sender, RoutedEventArgs e)
         {
             function fn = new function();
-            fn.SetIP(tbConfig_IP.Text, tbConfig_Subnet.Text, tbConfig_Gateway.Text, tbConfig_DNS.Text, tblHostname.Text);
+            fn.SetIP(tbConfig_IP.Text, tbConfig_Subnet.Text, tbConfig_Gateway.Text, tbConfig_DNS.Text, tbConfig_Hostname.Text);
             MessageBox.Show("Thiết lập thành công !");
         }
 

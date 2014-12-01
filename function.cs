@@ -6,14 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Management;
 using System.IO;
+using Microsoft.Win32;
+using System.Windows;
 
 
 namespace Project1_final
 {
     public class function 
     {
-
-        
 
         /// <summary>
         /// Phương thức hỗ trợ cấp địa chỉ IP động
@@ -47,10 +47,11 @@ namespace Project1_final
         /// <param name="Gateway">Default gateway</param>
         /// <param name="DnsSearchOrder">Dns mới</param>
         /// <param name="Hostname">Hostname mới</param>
-        public void SetIP( string IpAddresses, string SubnetMask, string Gateway, string DnsSearchOrder, string Hostname)
+        public void SetIP( string IpAddresses, string SubnetMask, string Gateway, string DnsSearchOrder, string HostName)
         {
             ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
             ManagementObjectCollection moc = mc.GetInstances();
+            
 
             foreach (ManagementObject mo in moc)
             {
@@ -78,25 +79,18 @@ namespace Project1_final
                         ManagementBaseObject setIP = mo.InvokeMethod("EnableStatic", newIP, null);
                         ManagementBaseObject setGateways = mo.InvokeMethod("SetGateways", newGate, null);
                         ManagementBaseObject setDNS = mo.InvokeMethod("SetDNSServerSearchOrder", newDNS, null);
-                        
-                    try
-                        {
-                        ManagementClass mComputerSystem = new ManagementClass("Win32_ComputerSystem");
-                        ManagementBaseObject newName = mc.GetMethodParameters("Rename");
-                        newName["DefaultIPGateway"] = new string[] { Hostname };
-                        ManagementBaseObject setName = mc.InvokeMethod("Rename", newName, null);
-                        }
-                    catch (Exception ex)
-                    {
-                        //do nothing
-                    }
-                        
-                        
-                        
-                        break;
+
+                        //change hostname
+                        RegistryKey key = Registry.LocalMachine.OpenSubKey("SYSTEM", true).OpenSubKey("CurrentControlSet", true).OpenSubKey("Services", true).OpenSubKey("tcpip", true).OpenSubKey("Parameters", true);
+
+                        key.SetValue("Hostname", HostName);
+                        key.SetValue("NV Hostname", HostName);
+                        MessageBox.Show("Ban can restart lai may de thay doi Hostname");
                     
                 }
             }
+            
+            
         }
 
 
